@@ -1,0 +1,51 @@
+#!/bin/sh
+# =============================================================
+# NIMBUS OS - Bootstrap Automatico v1.0
+# Se ejecuta en cada arranque via /etc/local.d/
+# =============================================================
+
+LOG="/var/log/nimbus-bootstrap.log"
+REPO_URL="https://github.com/SMurciaSanchez/nimbus-os.git"
+REPO_DIR="/tmp/nimbus"
+
+log() { echo "[nimbus] $(date '+%H:%M:%S') $1" | tee -a "$LOG"; }
+
+log "=== Iniciando bootstrap Nimbus OS ==="
+
+# --- 1. TECLADO ESPAÑOL ---
+log "Configurando teclado es..."
+setup-keymap es es 2>/dev/null && log "Teclado OK" || log "WARN: setup-keymap fallo"
+
+# --- 2. RED ---
+log "Levantando red..."
+ip link set eth0 up 2>/dev/null
+udhcpc -i eth0 -q -f 2>/dev/null && log "DHCP OK"
+
+if ! ip route | grep -q default; then
+    sleep 3
+    udhcpc -i eth0 -q -f 2>/dev/null
+fi
+
+[ -s /etc/resolv.conf ] || { echo "nameserver 1.1.1.1"; echo "nameserver 8.8.8.8"; } > /etc/resolv.conf
+
+ip route | grep -q default && log "Red OK" || { log "ERROR: Sin red. Abortando."; exit 1; }
+
+# --- 3. HERRAMIENTAS MINIMAS ---
+log "Instalando git y curl..."
+apk add --no-cache git curl 2>/dev/null && log "Herramientas OK"
+
+# --- 4. CLONAR REPOSITORIO ---
+log "Clonando $REPO_URL ..."
+rm -rf "$REPO_DIR"
+git clone --depth 1 "$REPO_URL" "$REPO_DIR" 2>/dev/null && log "Repo clonado OK" || {
+    log "ERROR: No se pudo clonar el repo"; exit 1
+}
+
+# --- 5. APLICAR CONFIGURACION ---
+if [ -x "$REPO_DIR/apply.sh" ]; then
+    sh "$REPO_DIR/apply.sh" && log "apply.sh OK"
+else
+    log "WARN: apply.sh no encontrado"
+fi
+
+log "=== Bootstrap completado - IP: $(ip route get 1 2>/dev/null | grep -o 'src [0-9.]*' | awk '{print $2}') ==="
