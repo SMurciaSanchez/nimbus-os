@@ -1,3 +1,33 @@
+<h1 align="center">☁️ Nimbus OS</h1>
+
+<p align="center">
+  <strong>Sistema Linux diskless en RAM para operaciones catastrales</strong><br>
+  <em>Caso de uso: Alcaldía Municipal de Chía</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Alpine%20Linux-0D597F?style=for-the-badge&logo=alpinelinux&logoColor=white" />
+  <img src="https://img.shields.io/badge/VirtualBox-183A61?style=for-the-badge&logo=virtualbox&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub-Provisioning-181717?style=for-the-badge&logo=github&logoColor=white" />
+</p>
+
+---
+
+## 📋 Descripción
+
+Nimbus OS es un sistema operativo **diskless** basado en Alpine Linux que corre
+completamente en RAM dentro de VirtualBox. Diseñado como modelo operativo para
+la gestión catastral de la Alcaldía de Chía, enfatizando velocidad, seguridad
+y reproducibilidad.
+
+## 🎯 Características principales
+
+- ⚡ **Ejecución 100% en RAM** — sin persistencia en disco, sistema efímero por diseño
+- 🔄 **Aprovisionamiento vía GitHub** — configuración versionada y reproducible
+- 🌐 **Red configurada desde arranque** — bootstrap automatizado
+- 🔒 **Seguridad por efemeralidad** — cada reinicio restaura un estado limpio
+
+## 🏗️ Arquitectura técnica
 # Nimbus OS
 
 **Sistema Operativo Efimero Stateless** - Alpine Linux en RAM pura, sin discos.
